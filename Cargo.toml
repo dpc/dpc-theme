@@ -8,6 +8,7 @@ license = "MIT"
 
 [dependencies]
 anstyle = "1.0.10"
+clap = "4.5.30"
 palette = "0.7.6"
 
 [profile.dev]
