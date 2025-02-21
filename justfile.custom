@@ -1,2 +1,5 @@
 gen-wezterm:
 	cargo run wezterm > $HOME/nix/dot/.config/wezterm/colors/dpc.toml
+
+aider:
+	aider Cargo.toml src/**.rs --no-auto-commits
