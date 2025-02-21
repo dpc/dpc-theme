@@ -68,7 +68,8 @@ fn generate_colors() -> Colors {
     };
 
     for (h_name, l, hue, c) in [
-        ("default", 0.25, 221.11, 0.039),
+        ("bg", 0.30, 221.11, 0.039),
+        ("fg", 0.8, 0.0, 0.0),
         ("black", 0.22, CYAN_HUE, 0.03),
         ("red", 0.6, RED_HUE, CHROMA_STD + 0.1),
         ("green", 0.8, GREEN_HUE, CHROMA_STD),
@@ -83,7 +84,8 @@ fn generate_colors() -> Colors {
             let srgb = Srgb::<f32>::from_color(oklch.clamp());
             let srgb = Srgb::<u8>::from_format(srgb);
             match (l_name, h_name) {
-                ("", "default") => colors.background = srgb,
+                ("", "bg") => colors.background = srgb,
+                ("b.", "fg") => colors.foreground = srgb,
                 ("", "black") => colors.black = srgb,
                 ("", "red") => colors.red = srgb,
                 ("", "green") => colors.green = srgb,
