@@ -70,7 +70,7 @@ fn generate_colors() -> Colors {
     for (h_name, l, hue, c) in [
         ("bg", 0.30, 221.11, 0.039),
         ("fg", 0.8, 0.0, 0.0),
-        ("black", 0.22, CYAN_HUE, 0.03),
+        ("black", 0.42, CYAN_HUE, 0.03),
         ("red", 0.6, RED_HUE, CHROMA_STD + 0.1),
         ("green", 0.8, GREEN_HUE, CHROMA_STD),
         ("yellow", 0.99, YELLOW_HUE, CHROMA_STD),
