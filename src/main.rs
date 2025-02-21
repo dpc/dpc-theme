@@ -16,8 +16,8 @@ enum Commands {
 
 pub const RED_HUE: f32 = 0.0;
 pub const GREEN_HUE: f32 = 145.0;
-pub const YELLOW_HUE: f32 = 103.0;
-pub const BLUE_HUE: f32 = 256.0;
+pub const YELLOW_HUE: f32 = 109.0;
+pub const BLUE_HUE: f32 = 264.0;
 pub const MAGENTA_HUE: f32 = 300.0;
 pub const CYAN_HUE: f32 = 210.0;
 
@@ -68,20 +68,22 @@ fn generate_colors() -> Colors {
     };
 
     for (h_name, l, hue, c) in [
-        ("black", 0.0, 0.0, 0.0),
-        ("red", 0.5, RED_HUE, CHROMA_MAX),
-        ("green", 0.5, GREEN_HUE, CHROMA_MAX),
-        ("yellow", 0.5, YELLOW_HUE, CHROMA_MAX),
-        ("blue", 0.5, BLUE_HUE, CHROMA_MAX),
-        ("magenta", 0.5, MAGENTA_HUE, CHROMA_MAX),
-        ("cyan", 0.5, CYAN_HUE, CHROMA_MAX),
-        ("white", 0.9, 0.0, 0.0),
+        ("default", 0.25, 221.11, 0.039),
+        ("black", 0.22, CYAN_HUE, 0.03),
+        ("red", 0.6, RED_HUE, CHROMA_STD + 0.1),
+        ("green", 0.8, GREEN_HUE, CHROMA_STD),
+        ("yellow", 0.99, YELLOW_HUE, CHROMA_STD),
+        ("blue", 0.9, BLUE_HUE, CHROMA_STD),
+        ("magenta", 0.7, MAGENTA_HUE, CHROMA_STD),
+        ("cyan", 0.8, CYAN_HUE, CHROMA_STD),
+        ("white", 1.45, GREEN_HUE, 0.02),
     ] {
-        for (l_name, l) in [("", l), ("b.", l + 0.3)] {
+        for (l_name, l, c) in [("", l * 0.65, c), ("b.", l, c - 0.02)] {
             let oklch = Oklch::new(l, c, hue);
             let srgb = Srgb::<f32>::from_color(oklch.clamp());
             let srgb = Srgb::<u8>::from_format(srgb);
             match (l_name, h_name) {
+                ("", "default") => colors.background = srgb,
                 ("", "black") => colors.black = srgb,
                 ("", "red") => colors.red = srgb,
                 ("", "green") => colors.green = srgb,
@@ -110,16 +112,24 @@ fn print_color(name: &str, normal: Color, bright: Color) {
     let normal_fg = anstyle::RgbColor(normal.red, normal.green, normal.blue).render_fg();
     let bright_bg = anstyle::RgbColor(bright.red, bright.green, bright.blue).render_bg();
     let bright_fg = anstyle::RgbColor(bright.red, bright.green, bright.blue).render_fg();
-    
+
     println!(
         "{}{:10}#{normal:X}{} {}{:10}#{bright:X}{}",
-        normal_bg, name, anstyle::Reset,
-        bright_bg, format!("{}b", name), anstyle::Reset,
+        normal_bg,
+        name,
+        anstyle::Reset,
+        bright_bg,
+        format!("{}b", name),
+        anstyle::Reset,
     );
     println!(
         "{}{:10}#{normal:X}{} {}{:10}#{bright:X}{}",
-        normal_fg, name, anstyle::Reset,
-        bright_fg, format!("{}b", name), anstyle::Reset,
+        normal_fg,
+        name,
+        anstyle::Reset,
+        bright_fg,
+        format!("{}b", name),
+        anstyle::Reset,
     );
 }
 
@@ -152,6 +162,13 @@ fn generate_wezterm_config(colors: Colors) {
     println!("foreground = \"#{:X}\"", colors.foreground);
     println!("selection_bg = \"#{:X}\"", colors.white);
     println!("selection_fg = \"#{:X}\"", colors.black);
+    println!();
+    println!("[metadata]");
+    println!("aliases = [\"dpc\"]");
+    println!("author = \"dpc (http://github.com/dpc)\"");
+    println!("name = \"dpc\"");
+    println!("origin_url = \"https://github.com/dpc/dpc-theme\"");
+    println!("wezterm_version = \"wezterm 0-unstable-2025-01-24\"");
     println!();
 }
 

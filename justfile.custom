@@ -1,0 +1,2 @@
+gen-wezterm:
+	cargo run wezterm > $HOME/nix/dot/.config/wezterm/colors/dpc.toml
