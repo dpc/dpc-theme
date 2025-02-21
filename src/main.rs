@@ -105,18 +105,21 @@ fn generate_colors() -> Colors {
     colors
 }
 
-fn print_color(name: &str, color: Color) {
+fn print_color(name: &str, normal: Color, bright: Color) {
+    let normal_bg = anstyle::RgbColor(normal.red, normal.green, normal.blue).render_bg();
+    let normal_fg = anstyle::RgbColor(normal.red, normal.green, normal.blue).render_fg();
+    let bright_bg = anstyle::RgbColor(bright.red, bright.green, bright.blue).render_bg();
+    let bright_fg = anstyle::RgbColor(bright.red, bright.green, bright.blue).render_fg();
+    
     println!(
-        "{}{:10}#{color:X}{}",
-        anstyle::RgbColor(color.red, color.green, color.blue).render_bg(),
-        name,
-        anstyle::Reset,
+        "{}{:10}#{normal:X}{} {}{:10}#{bright:X}{}",
+        normal_bg, name, anstyle::Reset,
+        bright_bg, format!("{}b", name), anstyle::Reset,
     );
     println!(
-        "{}{:10}#{color:X}{}",
-        anstyle::RgbColor(color.red, color.green, color.blue).render_fg(),
-        name,
-        anstyle::Reset,
+        "{}{:10}#{normal:X}{} {}{:10}#{bright:X}{}",
+        normal_fg, name, anstyle::Reset,
+        bright_fg, format!("{}b", name), anstyle::Reset,
     );
 }
 
@@ -162,24 +165,16 @@ fn main() {
         }
         None => {
             let colors = generate_colors();
-            print_color("fg", colors.foreground);
-            print_color("bg", colors.background);
-            print_color("black", colors.black);
-            print_color("red", colors.red);
-            print_color("green", colors.green);
-            print_color("yellow", colors.yellow);
-            print_color("blue", colors.blue);
-            print_color("magenta", colors.magenta);
-            print_color("cyan", colors.cyan);
-            print_color("white", colors.white);
-            print_color("blackb", colors.black_bright);
-            print_color("redb", colors.red_bright);
-            print_color("greenb", colors.green_bright);
-            print_color("yellowb", colors.yellow_bright);
-            print_color("blueb", colors.blue_bright);
-            print_color("magentab", colors.magenta_bright);
-            print_color("cyanb", colors.cyan_bright);
-            print_color("whiteb", colors.white_bright);
+            print_color("fg", colors.foreground, colors.foreground);
+            print_color("bg", colors.background, colors.background);
+            print_color("black", colors.black, colors.black_bright);
+            print_color("red", colors.red, colors.red_bright);
+            print_color("green", colors.green, colors.green_bright);
+            print_color("yellow", colors.yellow, colors.yellow_bright);
+            print_color("blue", colors.blue, colors.blue_bright);
+            print_color("magenta", colors.magenta, colors.magenta_bright);
+            print_color("cyan", colors.cyan, colors.cyan_bright);
+            print_color("white", colors.white, colors.white_bright);
         }
     }
 }
