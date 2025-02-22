@@ -45,68 +45,54 @@ struct Colors {
     cyan_bright: Color,
     white_bright: Color,
 }
-fn generate_colors() -> Colors {
-    let mut colors = Colors {
-        foreground: Srgb::new(255, 255, 255),
-        background: Srgb::new(0, 0, 0),
-        black: Srgb::new(0, 0, 0),
-        red: Srgb::new(0, 0, 0),
-        green: Srgb::new(0, 0, 0),
-        yellow: Srgb::new(0, 0, 0),
-        blue: Srgb::new(0, 0, 0),
-        magenta: Srgb::new(0, 0, 0),
-        cyan: Srgb::new(0, 0, 0),
-        white: Srgb::new(0, 0, 0),
-        black_bright: Srgb::new(0, 0, 0),
-        red_bright: Srgb::new(0, 0, 0),
-        green_bright: Srgb::new(0, 0, 0),
-        yellow_bright: Srgb::new(0, 0, 0),
-        blue_bright: Srgb::new(0, 0, 0),
-        magenta_bright: Srgb::new(0, 0, 0),
-        cyan_bright: Srgb::new(0, 0, 0),
-        white_bright: Srgb::new(0, 0, 0),
+fn generate_color_pair(l: f32, c: f32, hue: f32) -> (Color, Color) {
+    let normal = {
+        let oklch = Oklch::new(l * 0.65, c, hue);
+        let srgb = Srgb::<f32>::from_color(oklch.clamp());
+        Srgb::<u8>::from_format(srgb)
     };
+    
+    let bright = {
+        let oklch = Oklch::new(l, c - 0.02, hue);
+        let srgb = Srgb::<f32>::from_color(oklch.clamp());
+        Srgb::<u8>::from_format(srgb)
+    };
+    
+    (normal, bright)
+}
 
-    for (h_name, l, hue, c) in [
-        ("bg", 0.30, 221.11, 0.039),
-        ("fg", 0.8, 0.0, 0.0),
-        ("black", 0.42, CYAN_HUE, 0.03),
-        ("red", 0.6, RED_HUE, CHROMA_STD + 0.1),
-        ("green", 0.8, GREEN_HUE, CHROMA_STD),
-        ("yellow", 0.99, YELLOW_HUE, CHROMA_STD),
-        ("blue", 0.9, BLUE_HUE, CHROMA_STD),
-        ("magenta", 0.7, MAGENTA_HUE, CHROMA_STD),
-        ("cyan", 0.8, CYAN_HUE, CHROMA_STD),
-        ("white", 1.45, GREEN_HUE, 0.02),
-    ] {
-        for (l_name, l, c) in [("", l * 0.65, c), ("b.", l, c - 0.02)] {
-            let oklch = Oklch::new(l, c, hue);
-            let srgb = Srgb::<f32>::from_color(oklch.clamp());
-            let srgb = Srgb::<u8>::from_format(srgb);
-            match (l_name, h_name) {
-                ("", "bg") => colors.background = srgb,
-                ("b.", "fg") => colors.foreground = srgb,
-                ("", "black") => colors.black = srgb,
-                ("", "red") => colors.red = srgb,
-                ("", "green") => colors.green = srgb,
-                ("", "yellow") => colors.yellow = srgb,
-                ("", "blue") => colors.blue = srgb,
-                ("", "magenta") => colors.magenta = srgb,
-                ("", "cyan") => colors.cyan = srgb,
-                ("", "white") => colors.white = srgb,
-                ("b.", "black") => colors.black_bright = srgb,
-                ("b.", "red") => colors.red_bright = srgb,
-                ("b.", "green") => colors.green_bright = srgb,
-                ("b.", "yellow") => colors.yellow_bright = srgb,
-                ("b.", "blue") => colors.blue_bright = srgb,
-                ("b.", "magenta") => colors.magenta_bright = srgb,
-                ("b.", "cyan") => colors.cyan_bright = srgb,
-                ("b.", "white") => colors.white_bright = srgb,
-                _ => {}
-            }
-        }
+fn generate_colors() -> Colors {
+    let (background, _) = generate_color_pair(0.30, 0.039, 221.11);
+    let (_, foreground) = generate_color_pair(0.8, 0.0, 0.0);
+    let (black, black_bright) = generate_color_pair(0.42, 0.03, CYAN_HUE);
+    let (red, red_bright) = generate_color_pair(0.6, CHROMA_STD + 0.1, RED_HUE);
+    let (green, green_bright) = generate_color_pair(0.8, CHROMA_STD, GREEN_HUE);
+    let (yellow, yellow_bright) = generate_color_pair(0.99, CHROMA_STD, YELLOW_HUE);
+    let (blue, blue_bright) = generate_color_pair(0.9, CHROMA_STD, BLUE_HUE);
+    let (magenta, magenta_bright) = generate_color_pair(0.7, CHROMA_STD, MAGENTA_HUE);
+    let (cyan, cyan_bright) = generate_color_pair(0.8, CHROMA_STD, CYAN_HUE);
+    let (white, white_bright) = generate_color_pair(1.45, 0.02, GREEN_HUE);
+
+    Colors {
+        foreground,
+        background,
+        black,
+        red,
+        green,
+        yellow,
+        blue,
+        magenta,
+        cyan,
+        white,
+        black_bright,
+        red_bright,
+        green_bright,
+        yellow_bright,
+        blue_bright,
+        magenta_bright,
+        cyan_bright,
+        white_bright,
     }
-    colors
 }
 
 fn print_color(name: &str, normal: Color, bright: Color) {
