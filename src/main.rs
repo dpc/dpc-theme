@@ -28,6 +28,12 @@ type Color = Srgb<u8>;
 struct Colors {
     foreground: Color,
     background: Color,
+    bg_vvdark: Color,
+    bg_vdark: Color,
+    bg_dark: Color,
+    bg_light: Color,
+    bg_vlight: Color,
+    bg_vvlight: Color,
     black: Color,
     red: Color,
     green: Color,
@@ -45,29 +51,26 @@ struct Colors {
     cyan_bright: Color,
     white_bright: Color,
 }
+
+fn generate_color(l: f32, c: f32, hue: f32) -> Color {
+    let oklch = Oklch::new(l, c, hue);
+    let srgb = Srgb::<f32>::from_color(oklch.clamp());
+    Srgb::<u8>::from_format(srgb)
+}
+
 fn generate_color_pair(l: f32, c: f32, hue: f32) -> (Color, Color) {
-    let normal = {
-        let oklch = Oklch::new(l * 0.65, c, hue);
-        let srgb = Srgb::<f32>::from_color(oklch.clamp());
-        Srgb::<u8>::from_format(srgb)
-    };
-
-    let bright = {
-        let oklch = Oklch::new(l, c - 0.02, hue);
-        let srgb = Srgb::<f32>::from_color(oklch.clamp());
-        Srgb::<u8>::from_format(srgb)
-    };
-
+    let normal = generate_color(l * 0.65, c, hue);
+    let bright = generate_color(l, c - 0.02, hue);
     (normal, bright)
 }
 
 fn generate_colors() -> Colors {
-    let (background, _) = generate_color_pair(0.30, 0.039, 221.11);
+    let (background, _) = generate_color_pair(0.29, 0.039, 221.11);
     let (_, foreground) = generate_color_pair(0.8, 0.0, 0.0);
     let (black, black_bright) = generate_color_pair(0.42, 0.03, CYAN_HUE);
     let (red, red_bright) = generate_color_pair(0.6, CHROMA_STD + 0.1, RED_HUE);
     let (green, green_bright) = generate_color_pair(0.8, CHROMA_STD, GREEN_HUE);
-    let (yellow, yellow_bright) = generate_color_pair(0.99, CHROMA_STD, YELLOW_HUE);
+    let (yellow, yellow_bright) = generate_color_pair(0.85, CHROMA_STD, YELLOW_HUE);
     let (blue, blue_bright) = generate_color_pair(0.8, CHROMA_STD, BLUE_HUE);
     let (magenta, magenta_bright) = generate_color_pair(0.7, CHROMA_STD, MAGENTA_HUE);
     let (cyan, cyan_bright) = generate_color_pair(0.8, CHROMA_STD, CYAN_HUE);
@@ -92,10 +95,22 @@ fn generate_colors() -> Colors {
         magenta_bright,
         cyan_bright,
         white_bright,
+        bg_vvdark: generate_color(0.20, 0.05, 219.6),
+        bg_vdark: generate_color(0.274, 0.05, 219.6),
+        bg_dark: generate_color(0.321, 0.053, 219.6),
+        bg_light: generate_color(0.934, 0.031, 90.),
+        bg_vlight: generate_color(0.977, 0.012, 90.),
+        bg_vvlight: generate_color(1.037, 0.012, 90.),
     }
 }
 
-fn print_color(name: &str, normal: Color, bright: Color) {
+fn print_color(name: &str, normal: Color) {
+    let color = anstyle::RgbColor(normal.red, normal.green, normal.blue).render_bg();
+
+    print!("{}{:10}#{normal:X}{}", color, name, anstyle::Reset,);
+}
+
+fn println_color_pair(name: &str, normal: Color, bright: Color) {
     let normal_bg = anstyle::RgbColor(normal.red, normal.green, normal.blue).render_bg();
     let normal_fg = anstyle::RgbColor(normal.red, normal.green, normal.blue).render_fg();
     let bright_bg = anstyle::RgbColor(bright.red, bright.green, bright.blue).render_bg();
@@ -195,16 +210,28 @@ fn main() {
         }
         None => {
             let colors = generate_colors();
-            print_color("fg", colors.foreground, colors.foreground);
-            print_color("bg", colors.background, colors.background);
-            print_color("black", colors.black, colors.black_bright);
-            print_color("red", colors.red, colors.red_bright);
-            print_color("green", colors.green, colors.green_bright);
-            print_color("yellow", colors.yellow, colors.yellow_bright);
-            print_color("blue", colors.blue, colors.blue_bright);
-            print_color("magenta", colors.magenta, colors.magenta_bright);
-            print_color("cyan", colors.cyan, colors.cyan_bright);
-            print_color("white", colors.white, colors.white_bright);
+            println_color_pair("deft_fg", colors.foreground, colors.foreground);
+            println_color_pair("deft_bg", colors.background, colors.background);
+            print_color("bg_vvdark", colors.bg_vvdark);
+            print!(" ");
+            print_color("bg_vvlight", colors.bg_vvlight);
+            println!();
+            print_color("bg_vdark", colors.bg_vdark);
+            print!(" ");
+            print_color("bg_vlight", colors.bg_vlight);
+            println!();
+            print_color("bg_dark", colors.bg_dark);
+            print!(" ");
+            print_color("bg_light", colors.bg_light);
+            println!();
+            println_color_pair("black", colors.black, colors.black_bright);
+            println_color_pair("red", colors.red, colors.red_bright);
+            println_color_pair("green", colors.green, colors.green_bright);
+            println_color_pair("yellow", colors.yellow, colors.yellow_bright);
+            println_color_pair("blue", colors.blue, colors.blue_bright);
+            println_color_pair("magenta", colors.magenta, colors.magenta_bright);
+            println_color_pair("cyan", colors.cyan, colors.cyan_bright);
+            println_color_pair("white", colors.white, colors.white_bright);
             println!();
         }
     }
