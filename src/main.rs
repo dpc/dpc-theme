@@ -12,6 +12,8 @@ struct Cli {
 enum Commands {
     /// Generate Wezterm color scheme
     Wezterm,
+    /// Generate Fish shell environment variables
+    Fish,
 }
 
 pub const RED_HUE: f32 = 6.0;
@@ -200,6 +202,54 @@ wezterm_version = "wezterm 0-unstable-2025-01-24"
     );
 }
 
+fn generate_fish_config(colors: Colors) {
+    println!("set -gx DPC_TERM_COLOR_FG #{:X}", colors.foreground);
+    println!("set -gx DPC_TERM_COLOR_BG #{:X}", colors.background);
+    println!("set -gx DPC_TERM_COLOR_BG_VVDARK #{:X}", colors.bg_vvdark);
+    println!("set -gx DPC_TERM_COLOR_BG_VDARK #{:X}", colors.bg_vdark);
+    println!("set -gx DPC_TERM_COLOR_BG_DARK #{:X}", colors.bg_dark);
+    println!("set -gx DPC_TERM_COLOR_BG_LIGHT #{:X}", colors.bg_light);
+    println!("set -gx DPC_TERM_COLOR_BG_VLIGHT #{:X}", colors.bg_vlight);
+    println!("set -gx DPC_TERM_COLOR_BG_VVLIGHT #{:X}", colors.bg_vvlight);
+    println!("set -gx DPC_TERM_COLOR_BLACK #{:X}", colors.black);
+    println!("set -gx DPC_TERM_COLOR_RED #{:X}", colors.red);
+    println!("set -gx DPC_TERM_COLOR_GREEN #{:X}", colors.green);
+    println!("set -gx DPC_TERM_COLOR_YELLOW #{:X}", colors.yellow);
+    println!("set -gx DPC_TERM_COLOR_BLUE #{:X}", colors.blue);
+    println!("set -gx DPC_TERM_COLOR_MAGENTA #{:X}", colors.magenta);
+    println!("set -gx DPC_TERM_COLOR_CYAN #{:X}", colors.cyan);
+    println!("set -gx DPC_TERM_COLOR_WHITE #{:X}", colors.white);
+    println!(
+        "set -gx DPC_TERM_COLOR_BLACK_BRIGHT #{:X}",
+        colors.black_bright
+    );
+    println!("set -gx DPC_TERM_COLOR_RED_BRIGHT #{:X}", colors.red_bright);
+    println!(
+        "set -gx DPC_TERM_COLOR_GREEN_BRIGHT #{:X}",
+        colors.green_bright
+    );
+    println!(
+        "set -gx DPC_TERM_COLOR_YELLOW_BRIGHT #{:X}",
+        colors.yellow_bright
+    );
+    println!(
+        "set -gx DPC_TERM_COLOR_BLUE_BRIGHT #{:X}",
+        colors.blue_bright
+    );
+    println!(
+        "set -gx DPC_TERM_COLOR_MAGENTA_BRIGHT #{:X}",
+        colors.magenta_bright
+    );
+    println!(
+        "set -gx DPC_TERM_COLOR_CYAN_BRIGHT #{:X}",
+        colors.cyan_bright
+    );
+    println!(
+        "set -gx DPC_TERM_COLOR_WHITE_BRIGHT #{:X}",
+        colors.white_bright
+    );
+}
+
 fn main() {
     let cli = Cli::parse();
 
@@ -207,6 +257,10 @@ fn main() {
         Some(Commands::Wezterm) => {
             let colors = generate_colors();
             generate_wezterm_config(colors);
+        }
+        Some(Commands::Fish) => {
+            let colors = generate_colors();
+            generate_fish_config(colors);
         }
         None => {
             let colors = generate_colors();
